@@ -184,59 +184,59 @@ func BuildGraph(title string, parent *EmployeeTree) (string, error) {
 // TestLDAP shows an example Employee Tree
 var TestLDAP = EmployeeTree{
 	Name:  "Top O the World",
-	Title: "Yo!?",
+	Title: "Everything",
 	DirectReports: []EmployeeTree{
 		{
 			Name:  "IC1",
 			Title: "Director Something",
 			Image: "images/ic.png",
 		},
-		// {
-		// 	Name:  "Manager 1",
-		// 	Title: "Director Something Else",
-		// 	Image: "images/dr.png",
-		// 	DirectReports: []EmployeeTree{
-		// 		{
-		// 			Name:  "IC2",
-		// 			Title: "Individual Contributer",
-		// 			Image: "images/ic.png",
-		// 		},
-		// 		{
-		// 			Name:  "IC3",
-		// 			Title: "Individual Contributer",
-		// 			Image: "images/ic.png",
-		// 		},
-		// 		{
-		// 			Name:  "IC4",
-		// 			Title: "Individual Contributer",
-		// 			Image: "images/ic.png",
-		// 		},
-		// 		{
-		// 			Name:  "Manager 2",
-		// 			Title: "That Manager!?",
-		// 			Image: "images/dr.png",
-		// 			DirectReports: []EmployeeTree{
-		// 				{
-		// 					Name:  "IC5",
-		// 					Title: "Individual Contributer",
-		// 					Image: "images/ic.png",
-		// 				},
-		// 				{
-		// 					Name:  "Manager3",
-		// 					Title: "Which manager?",
-		// 					Image: "images/dr.png",
-		// 					DirectReports: []EmployeeTree{
-		// 						{Name: "IC6", Title: "Some Title", Image: "images/ic.png"},
-		// 						{Name: "IC7", Title: "Some Title Again", Image: "images/ic.png"},
-		// 					},
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// },
+		{
+			Name:  "Manager 1",
+			Title: "Director Something Else",
+			Image: "images/dr.png",
+			DirectReports: []EmployeeTree{
+				{
+					Name:  "IC2",
+					Title: "Individual Contributer",
+					Image: "images/ic.png",
+				},
+				{
+					Name:  "IC3",
+					Title: "Individual Contributer",
+					Image: "images/ic.png",
+				},
+				{
+					Name:  "IC4",
+					Title: "Individual Contributer",
+					Image: "images/ic.png",
+				},
+				{
+					Name:  "Manager 2",
+					Title: "That Manager!?",
+					Image: "images/dr.png",
+					DirectReports: []EmployeeTree{
+						{
+							Name:  "IC5",
+							Title: "Individual Contributer",
+							Image: "images/ic.png",
+						},
+						{
+							Name:  "Manager3",
+							Title: "Which manager?",
+							Image: "images/dr.png",
+							DirectReports: []EmployeeTree{
+								{Name: "IC6", Title: "Some Title", Image: "images/ic.png"},
+								{Name: "IC7", Title: "Some Title Again", Image: "images/ic.png"},
+							},
+						},
+					},
+				},
+			},
+		},
 		{
 			Name:  "IC8",
-			Title: "BestBuy Director Something in General",
+			Title: "Director In Title but not Function or Something in General",
 			Image: "images/ic.png",
 		},
 		{
@@ -244,7 +244,7 @@ var TestLDAP = EmployeeTree{
 			Title: "Director Something in Specific",
 			Image: "images/dr.png",
 			DirectReports: []EmployeeTree{
-				{Name: "IC9", Title: "No-one Cares", Image: "images/ic.png"},
+				{Name: "IC9", Title: "It'll be fine?", Image: "images/ic.png"},
 			},
 		},
 	},
