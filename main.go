@@ -13,22 +13,28 @@ var edgeAttributes = map[string]string{
 	"penwidth": "3",
 }
 
+var rootAttributes = map[string]string{
+	"bgcolor": "#FFFFFFFF",
+}
+
 func individualContributersAttrs(name string, title string, imagePath string) map[string]string {
 	name = strings.Replace(wordwrap.WrapString(name, 16), "\n", "<BR />", -1)
 	title = strings.Replace(wordwrap.WrapString(title, 16), "\n", "<BR />", -1)
 	formattedLabel := fmt.Sprintf(`
     <<TABLE border="0" cellborder="0">
-    <TR><TD><IMG SRC="%s" SCALE="TRUE"/></TD></TR>
-    <TR><TD><B><FONT POINT-SIZE="30">%s</FONT></B><BR /><FONT POINT-SIZE="20">%s</FONT></TD></TR>
+    <TR><TD WIDTH="144px" HEIGHT="144px"><IMG SRC="%s" SCALE="TRUE"/></TD></TR>
+    <TR><TD><B><FONT POINT-SIZE="45">%s</FONT></B><BR /><FONT POINT-SIZE="30">%s</FONT></TD></TR>
     </TABLE>>
     `, imagePath, name, title)
 	return map[string]string{
 		"shape":     "box",
 		"label":     formattedLabel,
 		"fixedsize": "shape",
-		"width":     "3",
-		"height":    "2",
+		"width":     "5",
+		"height":    "4",
 		"penwidth":  "3",
+		"fillcolor": "#88888888",
+		"style":     "filled",
 	}
 }
 
@@ -37,17 +43,19 @@ func directReportsAttrs(name string, title string, imagePath string) map[string]
 	title = strings.Replace(wordwrap.WrapString(title, 16), "\n", "<BR />", -1)
 	formattedLabel := fmt.Sprintf(`
     <<TABLE border="0" cellborder="0">
-    <TR><TD><IMG SRC="%s" SCALE="TRUE"/></TD></TR>
-    <TR><TD><B><FONT POINT-SIZE="30">%s</FONT></B><BR /><FONT POINT-SIZE="20">%s</FONT></TD></TR>
+    <TR><TD WIDTH="144px" HEIGHT="144px"><IMG SRC="%s" SCALE="TRUE"/></TD></TR>
+    <TR><TD><B><FONT POINT-SIZE="45">%s</FONT></B><BR /><FONT POINT-SIZE="30">%s</FONT></TD></TR>
     </TABLE>>
     `, imagePath, name, title)
 	return map[string]string{
-		"shape":     "invhouse",
+		"shape":     "invtrapezium",
 		"label":     formattedLabel,
 		"fixedsize": "shape",
-		"width":     "3",
-		"height":    "3",
+		"width":     "5",
+		"height":    "4",
 		"penwidth":  "3",
+		"fillcolor": "#88888888",
+		"style":     "filled",
 	}
 }
 
@@ -154,11 +162,14 @@ func traverseGraph(g *gographviz.Escape, parent string, employees *[]employee) {
 
 func main() {
 	g := gographviz.NewEscape()
-	g.SetName("Org Chart")
+
+	g.SetName("Org - Chart")
 	g.SetDir(true)
 
-	g.AddNode("Top", "MvO", directReportsAttrs("MvO", "Sr. Director", "images/user.jpg"))
-	traverseGraph(g, "MvO", &testLDAP)
+	g.AddAttr("Org - Chart", "bgcolor", "transparent")
+
+	g.AddNode("Org Chart", "Eric", directReportsAttrs("Eric", "Knows His Shit", "images/user.jpg"))
+	traverseGraph(g, "Eric", &testLDAP)
 	s := g.String()
 
 	ioutil.WriteFile("graph.dot", []byte(s), 0644)
