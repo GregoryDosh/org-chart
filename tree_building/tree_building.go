@@ -21,6 +21,11 @@ var (
 		"bgcolor":  "transparent",
 		"labelloc": "t",
 		"fontsize": "50",
+		"rankdir":  "LR",
+		"overlap":  "false",
+		"splines":  "ortho",
+		"nodesep":  "2",
+		"ranksep":  "4",
 	}
 )
 
@@ -52,7 +57,7 @@ func individualContributersAttrs(name string, title string, imagePath string) ma
 		"shape":     "box",
 		"label":     formattedLabel,
 		"fixedsize": "shape",
-		"width":     "5",
+		"width":     "8",
 		"height":    "4",
 		"penwidth":  "3",
 		"fillcolor": "#CCCCCC88",
@@ -74,11 +79,11 @@ func directReportsAttrs(name string, title string, imagePath string) map[string]
     </TABLE>>
     `, imagePath, name, title)
 	return map[string]string{
-		"shape":     "invtrapezium",
+		"shape":     "circle",
 		"label":     formattedLabel,
 		"fixedsize": "shape",
 		"width":     "5",
-		"height":    "4",
+		"height":    "5",
 		"penwidth":  "3",
 		"fillcolor": "#88888888",
 		"style":     "filled",

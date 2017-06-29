@@ -72,12 +72,12 @@ func (c *ActiveDirectoryConfig) Close() {
 }
 
 var (
-	foundUser     int32
-	searchedDepth int32
+	foundUser int32
 )
 
-func getUserInfo(c *ActiveDirectoryConfig, user string) (*tree.EmployeeTree, error) {
+func getUserInfo(c *ActiveDirectoryConfig, user string, searchedDepth int32) (*tree.EmployeeTree, error) {
 	t := &tree.EmployeeTree{}
+	log.Debugf("On search depth %d of %d & user %d of %d.", searchedDepth, c.SearchDepth, foundUser, c.MaxUsers)
 	if foundUser > c.MaxUsers {
 		return t, fmt.Errorf("users found %d exceeds MaxUsers %d", foundUser, c.MaxUsers)
 	}
@@ -89,11 +89,11 @@ func getUserInfo(c *ActiveDirectoryConfig, user string) (*tree.EmployeeTree, err
 	if c.SearchFieldImage != "" {
 		searchFields = append(searchFields, c.SearchFieldImage)
 	}
-	ldapQuery := "(|"
+	ldapQuery := "(&(objectClass=user)(objectCategory=person)(|"
 	for _, field := range append(c.SearchFieldAltNames, c.SearchFieldName) {
 		ldapQuery += fmt.Sprintf("(%s=%s)", field, user)
 	}
-	ldapQuery += ")"
+	ldapQuery += "))"
 
 	searchRequest := ldap.NewSearchRequest(
 		c.BindDN,
@@ -114,6 +114,9 @@ func getUserInfo(c *ActiveDirectoryConfig, user string) (*tree.EmployeeTree, err
 	case 1:
 		log.Debugf("Parsing %s", user)
 	default:
+		for _, entry := range sr.Entries {
+			log.Warnf("User %s - %s found?", entry.GetAttributeValues(c.SearchFieldName), entry.GetAttributeValues(c.SearchDisplayName))
+		}
 		return t, fmt.Errorf("found %d results but expected 1 for %s using %s", n, user, ldapQuery)
 	}
 
@@ -121,16 +124,13 @@ func getUserInfo(c *ActiveDirectoryConfig, user string) (*tree.EmployeeTree, err
 
 	for _, entry := range sr.Entries {
 		directReportsFound := entry.GetAttributeValues(c.SearchFieldDirectReports)
-		if len(directReportsFound) > 1 {
-			atomic.AddInt32(&searchedDepth, 1)
-		}
-
 		for _, dr := range directReportsFound {
-			log.Debugf("Found direct report %s", dr)
+			logMessage := fmt.Sprintf("Found direct report %s", dr)
 			dr = strings.Split(dr, ",")[0]
 			dr = strings.Split(dr, "=")[1]
-			log.Debugf("Cleansed to %s", dr)
-			drTree, err := getUserInfo(c, dr)
+			logMessage = logMessage + fmt.Sprintf(" and cleansed to %s", dr)
+			log.Debugf(logMessage)
+			drTree, err := getUserInfo(c, dr, searchedDepth+1)
 			if err != nil {
 				return t, err
 			}
@@ -141,7 +141,9 @@ func getUserInfo(c *ActiveDirectoryConfig, user string) (*tree.EmployeeTree, err
 			return t.DirectReports[i].Name <= t.DirectReports[j].Name
 		})
 
-		log.Debugf("All DR Info: %s", t.DirectReports)
+		if len(t.DirectReports) > 0 {
+			log.Debugf("All DR Info: %s", t.DirectReports)
+		}
 
 		t.Name = entry.GetAttributeValue(c.SearchDisplayName)
 		t.Title = entry.GetAttributeValue(c.SearchFieldTitle)
@@ -197,7 +199,7 @@ func TraverseEmployeeTree(c *ActiveDirectoryConfig, topUser string) (*tree.Emplo
 	}
 
 	// This call will be recursive
-	parent, err := getUserInfo(c, topUser)
+	parent, err := getUserInfo(c, topUser, 1)
 	if err != nil {
 		return t, err
 	}
